@@ -126,12 +126,7 @@ def cargar_nacimientos():
 
     # --- Gráfico 1: Tasas promedio por municipio ---
     ranking.plot(kind="bar", figsize=(10,6))
-    plt.title("Promedio de tasas por municipio (2021–2024)")
-    plt.ylabel("Porcentaje (%)")
-    plt.xlabel("Municipio")
-    plt.xticks(rotation=45, ha="right")
-    plt.tight_layout()
-    st.pyplot(plt)
+
 
     # Analisis de correlacion
     # Calcular matriz de correlación
@@ -149,7 +144,7 @@ def cargar_nacimientos():
     correlacion.rename(index=etiquetas, columns=etiquetas, inplace=True)
 
     # Mostrar matriz de correlación como texto
-    st.write("Matriz de correlación entre prematuro, bajo peso y talla baja:")
+    st.write("Matriz de correlación de variables:")
     st.dataframe(correlacion)
 
     # Crear mapa de calor

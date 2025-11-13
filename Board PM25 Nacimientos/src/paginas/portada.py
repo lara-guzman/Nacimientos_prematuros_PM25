@@ -1,6 +1,7 @@
 import streamlit as st
 from pathlib import Path
 import pandas as pd
+from PIL import Image
 
 from paginas.contenido import cargar_pm25, cargar_nacimientos
 
@@ -37,6 +38,11 @@ def _base_path():
 # Funciones para cada página
 def cargar_portada():
     st.title("Proyecto: PM2.5 y Nacimientos en el Valle de Aburrá (2021-2024)")
+    # Cargar y mostrar la imagen
+    base = _base_path()
+    image_path = base / "assets" / "bby.png"
+    image = Image.open(image_path)
+    st.image(image, use_container_width =True)
     st.markdown(
         "Este proyecto reúne mediciones de PM2.5 y registros de nacimientos en los municipios del Valle de Aburrá. "
         "Las visualizaciones permiten explorar la evolución temporal de PM2.5 y analizar indicadores perinatales "
