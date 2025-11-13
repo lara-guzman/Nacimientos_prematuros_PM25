@@ -177,39 +177,34 @@ def cargar_nacimientos():
     total_nacimientos_por_mun = resumen.groupby("CODMUNRE")["Total_nacimientos"].sum()
 
     # Graficar torta
-    plt.figure(figsize=(5, 5))
-    plt.pie(
+    plt.figure(figsize=(8, 8))
+    wedges, texts, autotexts = plt.pie(
         total_nacimientos_por_mun,
         labels=total_nacimientos_por_mun.index,
         autopct='%1.1f%%',
         startangle=90,
-        textprops={'fontsize': 8}
+        textprops={'fontsize': 9}
     )
-    plt.title("Distribución porcentual de nacimientos por municipio (2021-2024)")
-    plt.axis('equal')  # Para que la torta sea un círculo perfecto
 
-    # Mostrar en Streamlit
+    fig = _grafico_torta_con_etiquetas_fuera(total_nacimientos_por_mun, total_nacimientos_por_mun.index, "Distribución porcentual de nacimientos por municipio (2021-2024)", "Municipios")
     st.pyplot(plt)
+
+    # Mover los porcentajes fuera de la torta
+    
 
     # Agrupar suma de nacimientos prematuros por municipio
     prematuros_por_mun = resumen.groupby("CODMUNRE")["Prematuros"].sum()
 
-    # Graficar torta
-    plt.figure(figsize=(5, 5))
-    plt.pie(
-        prematuros_por_mun,
-        labels=prematuros_por_mun.index,
-        autopct='%1.1f%%',
-        startangle=90,
-        textprops={'fontsize': 8}
+    # Graficar anillo (donut) usando la función helper
+    fig_donut_prematuros = _grafico_torta_con_etiquetas_fuera(
+        prematuros_por_mun.values,
+        prematuros_por_mun.index,
+        "Distribución porcentual de nacimientos prematuros por municipio (2021-2024)",
+        "Municipios"
     )
-    plt.title("Distribución porcentual de nacimientos prematuros por municipio (2021-2024)")
-    plt.axis('equal')  # Para que la torta sea un círculo perfecto
+    st.pyplot(fig_donut_prematuros)
+    plt.clf()
 
-    # Mostrar en Streamlit
-    st.pyplot(plt)
-
-    # ...existing code...
     # --- Gráfico 2: Evolución anual ---
     tasas_anuales = (
         resumen.groupby("ANO")[["Tasa_prematuros_%", "Tasa_bajo_peso_%", "Tasa_talla_baja_%"]]
@@ -253,6 +248,38 @@ def cargar_nacimientos():
     plt.tight_layout()
     st.pyplot(plt)
     plt.clf()
+
+def _grafico_torta_con_etiquetas_fuera(valores, labels, titulo, legend_title):
+    fig, ax = plt.subplots(figsize=(10, 8))
+    wedges, texts, autotexts = ax.pie(
+        valores,
+        labels=None,
+        autopct='%1.1f%%',
+        startangle=90,
+        textprops={'fontsize': 11},     # porcentaje: un poco más grande
+        pctdistance=0.80,
+        wedgeprops=dict(width=0.38, edgecolor='white', linewidth=2)  # Crea el anillo
+    )
+    
+    # Ajustar estilo de los porcentajes dentro del anillo
+    for autotext in autotexts:
+        autotext.set_color('white')
+        autotext.set_fontsize(11)
+        autotext.set_weight('bold')
+    
+    plt.setp(autotexts, size=11, weight="bold")
+    # Leyenda con etiquetas de municipios más grandes
+    lgd = ax.legend(wedges, labels, title=legend_title, loc="center left", bbox_to_anchor=(1, 0, 0.5, 1), fontsize=12)
+    # Asegurar que todos los textos de la leyenda tengan el mismo tamaño
+    for t in lgd.get_texts():
+        t.set_fontsize(12)
+    if lgd.get_title():
+        lgd.get_title().set_fontsize(12)
+    
+    plt.title(titulo, fontsize=13, weight='bold', pad=20)
+    plt.axis('equal')
+    plt.tight_layout()
+    return fig
 
 def cargar_pm25():
     # Obtener la ruta base del archivo actual

@@ -7,8 +7,6 @@ from pathlib import Path
 from joblib import load
 import io
 
-
-# Menu lateral para seleccionar página
 # Menu lateral para seleccionar página
 pagina = st.sidebar.selectbox("Selecciona la página", ["Home", "Datos PM2.5", "Registros de Nacimientos", "Predicción Prematuridad"])
 
